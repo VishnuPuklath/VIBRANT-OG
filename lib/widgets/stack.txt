@@ -1,0 +1,26 @@
+Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    ('assets/vibsplash.jpg'),
+                  ),
+                ),
+              ),
+              height: 265,
+            ),
+            Positioned(
+              left: 149,
+              bottom: 62,
+              child: Align(
+                child: CircleAvatar(
+                  radius: 62.0,
+                  backgroundImage: NetworkImage(
+                      'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSIekuJOwtOWtZl9QX3t46Yz_7RCZ4Kpebnugsst2OFfNl-SGjf'),
+                  backgroundColor: Colors.grey,
+                ),
+              ),
+            )
+          ],
+        ),

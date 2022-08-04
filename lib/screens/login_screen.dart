@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:vibrant_og/screens/register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -7,7 +8,6 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Container(
@@ -21,6 +21,7 @@ class LoginScreen extends StatelessWidget {
                   child: Text(
                     'VIBRANT',
                     style: TextStyle(
+                      color: Colors.deepPurple,
                       fontStyle: FontStyle.italic,
                       fontSize: 35,
                     ),
@@ -73,6 +74,17 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        SizedBox(
+          height: 15,
+        ),
+        Container(
+          width: 200,
+          child: ElevatedButton(
+              onPressed: () {},
+              child: Text('Login'),
+              style: ElevatedButton.styleFrom(
+                  shadowColor: Colors.black, primary: Colors.pink)),
         ),
         SizedBox(
           height: 15,
