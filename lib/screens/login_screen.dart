@@ -1,9 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+import 'package:vibrant_og/screens/home_screen.dart';
+import 'package:vibrant_og/screens/login_fetch.dart';
 import 'package:vibrant_og/screens/register_screen.dart';
+import 'package:vibrant_og/services/authmethod.dart';
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _PasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +52,9 @@ class LoginScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
+                controller: _emailController,
                 decoration: InputDecoration(
-                  hintText: 'Username',
+                  hintText: 'Email',
                   border: InputBorder.none,
                 ),
               ),
@@ -67,6 +76,7 @@ class LoginScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: TextFormField(
+                controller: _PasswordController,
                 decoration: InputDecoration(
                   hintText: 'Password',
                   border: InputBorder.none,
@@ -81,12 +91,23 @@ class LoginScreen extends StatelessWidget {
         Container(
           width: 200,
           child: ElevatedButton(
-              onPressed: () {},
-              child: Text('Login'),
-              style: ElevatedButton.styleFrom(
-                  shadowColor: Colors.black, primary: Colors.pink)),
+            onPressed: () async {
+              String res = await AuthMethods().login(
+                  email: _emailController.text,
+                  password: _PasswordController.text);
+              if (res == 'success') {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) {
+                  return LoginFetchScreen();
+                }));
+              }
+            },
+            child: Text('Login'),
+            style: ElevatedButton.styleFrom(
+                shadowColor: Colors.black, primary: Colors.pink),
+          ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 15,
         ),
         Row(
