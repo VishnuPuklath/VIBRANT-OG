@@ -1,6 +1,11 @@
+import 'dart:typed_data';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:vibrant_og/screens/home_screen.dart';
+import 'package:vibrant_og/screens/login_fetch.dart';
 
 import 'package:vibrant_og/screens/login_screen.dart';
 
@@ -17,150 +22,196 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   bool isLoading = false;
-  String? verificationId;
-  int? _resendToken;
-  MobileVerificationState currentState =
-      MobileVerificationState.SHOW_MOBILE_FORM_STATE;
+  Uint8List? File;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _mobileController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: SingleChildScrollView(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Container(
-            child: Stack(
-              children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage('assets/vibsplash.jpg'),
-                  radius: 70,
-                ),
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.camera_alt,
-                        color: Colors.black,
-                      )),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.blueAccent),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
-                ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Container(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: File == null
+                        ? AssetImage('assets/nouser.png')
+                        : MemoryImage(File!) as ImageProvider,
+                    radius: 70,
+                  ),
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: IconButton(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: const Text('Choose image from'),
+                                    actions: [
+                                      TextButton(
+                                        style: TextButton.styleFrom(),
+                                        onPressed: () {
+                                          selectImage(ImageSource.camera);
+                                        },
+                                        child: const Text('camera'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          selectImage(ImageSource.gallery);
+                                        },
+                                        child: const Text('Gallery'),
+                                      ),
+                                    ],
+                                  ));
+                        },
+                        icon: const Icon(
+                          Icons.camera_alt,
+                          color: Colors.black,
+                        )),
+                  ),
+                ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    hintText: 'Username',
-                    border: InputBorder.none,
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueAccent),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextFormField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      hintText: 'Username',
+                      border: InputBorder.none,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.blueAccent),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueAccent),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
                 ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    hintText: 'Email id',
-                    border: InputBorder.none,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      hintText: 'Email id',
+                      border: InputBorder.none,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.blue),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blueAccent),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
                 ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    hintText: 'Password',
-                    border: InputBorder.none,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextFormField(
+                    controller: _bioController,
+                    decoration: InputDecoration(
+                      hintText: 'Bio',
+                      border: InputBorder.none,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.blue),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(20),
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blue),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
                 ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: 'Retype-Password',
-                    border: InputBorder.none,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      border: InputBorder.none,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Container(
-            width: 200,
-            child: SizedBox(
-              height: 43,
-              child: ElevatedButton(
+            SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.blue),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      hintText: 'Retype-Password',
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Container(
+              width: 200,
+              child: SizedBox(
+                height: 43,
+                child: ElevatedButton(
                   onPressed: () async {
                     setState(() {
                       isLoading = true;
                     });
                     String res = await AuthMethods().signup(
+                        file: File,
                         email: _emailController.text,
                         password: _passwordController.text,
                         username: _usernameController.text);
@@ -173,10 +224,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       isLoading = false;
                     });
                     if (res == 'success') {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) {
-                        return HomeScreen();
-                      }));
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return LoginFetchScreen();
+                        }),
+                      );
                     }
                   },
                   child: isLoading
@@ -186,30 +239,56 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         )
                       : Text('Register'),
                   style: ElevatedButton.styleFrom(
-                      shadowColor: Colors.black, primary: Colors.pink)),
+                      shadowColor: Colors.black, primary: Colors.pink),
+                ),
+              ),
             ),
-          ),
-          SizedBox(
-            height: 15,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Already have an account?'),
-              TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return LoginScreen();
-                      }),
-                    );
-                  },
-                  child: Text('Login'))
-            ],
-          )
-        ]),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Already have an account?'),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return LoginScreen();
+                        }),
+                      );
+                    },
+                    child: Text('Login'))
+              ],
+            )
+          ]),
+        ),
       ),
-    ));
+    );
+  }
+
+  void selectImage(ImageSource source) async {
+    Uint8List im = await pickImage(source);
+    setState(() {
+      File = im;
+    });
+    Navigator.pop(context);
+  }
+
+  pickImage(ImageSource source) async {
+    final ImagePicker _imagePicker = ImagePicker();
+    XFile? _file = await _imagePicker.pickImage(source: source);
+    if (_file != null) {
+      return await _file.readAsBytes();
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: Colors.red,
+        content: Text('No image selected'),
+      ),
+    );
+    Navigator.pop(context);
+    print('No image selected');
   }
 }

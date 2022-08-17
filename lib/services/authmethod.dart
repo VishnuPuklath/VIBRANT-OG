@@ -1,24 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:vibrant_og/model/user.dart' as model;
+import 'package:vibrant_og/services/storage_methods.dart';
 
 class AuthMethods {
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<String> signup({
-    required username,
-    required email,
-    required password,
-  }) async {
+  Future<String> signup(
+      {required username, required email, required password, file, bio}) async {
     String res = 'Some error occured';
-
+    file ??= AssetImage('assets/nouser.png');
     try {
       UserCredential cred = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+
+      String photoUrl = await StorageMethods()
+          .uploadImageToStorage('profilePics', file, false);
       model.User user = model.User(
+          bio: bio,
           email: email,
+          profilePicUrl: photoUrl,
           password: password,
           username: username,
           id: cred.user!.uid);

@@ -6,6 +6,7 @@ import 'package:vibrant_og/model/user.dart' as model;
 import 'package:vibrant_og/providers/user_provider.dart';
 import 'package:vibrant_og/screens/chatscreen.dart';
 import 'package:vibrant_og/screens/favourites.dart';
+import 'package:vibrant_og/screens/login_screen.dart';
 import 'package:vibrant_og/screens/post_screen.dart';
 import 'package:vibrant_og/screens/profile_screen.dart';
 import 'package:vibrant_og/screens/vibrant.dart';
@@ -49,7 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
               style: ElevatedButton.styleFrom(
                 primary: Colors.black,
               ),
-              onPressed: () {},
+              onPressed: () {
+                _auth.signOut();
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: ((context) => LoginScreen())));
+              },
               child: const Icon(
                 Icons.exit_to_app,
                 size: 32,

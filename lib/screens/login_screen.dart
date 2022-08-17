@@ -7,11 +7,21 @@ import 'package:vibrant_og/screens/login_fetch.dart';
 import 'package:vibrant_og/screens/register_screen.dart';
 import 'package:vibrant_og/services/authmethod.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   TextEditingController _emailController = TextEditingController();
+
   TextEditingController _PasswordController = TextEditingController();
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -85,24 +95,72 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 15,
         ),
         Container(
+          height: 43,
           width: 200,
           child: ElevatedButton(
             onPressed: () async {
-              String res = await AuthMethods().login(
-                  email: _emailController.text,
-                  password: _PasswordController.text);
-              if (res == 'success') {
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) {
-                  return LoginFetchScreen();
-                }));
+              setState(() {
+                isLoading = true;
+              });
+              if (_emailController.text.isNotEmpty &&
+                  _PasswordController.text.isNotEmpty) {
+                String res = await AuthMethods().login(
+                    email: _emailController.text,
+                    password: _PasswordController.text);
+                if (res != 'success') {
+                  Future.delayed(
+                      const Duration(
+                        seconds: 1,
+                      ), () {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  });
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text(res),
+                    ),
+                  );
+                }
+                if (res == 'success') {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return LoginFetchScreen();
+                      },
+                    ),
+                  );
+                }
+              } else {
+                Future.delayed(
+                    const Duration(
+                      seconds: 1,
+                    ), () {
+                  setState(() {
+                    isLoading = false;
+                  });
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.red,
+                    content: Text('Please enter all fields'),
+                  ),
+                );
               }
             },
-            child: Text('Login'),
+            child: isLoading
+                ? const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  )
+                : Text('Login'),
             style: ElevatedButton.styleFrom(
                 shadowColor: Colors.black, primary: Colors.pink),
           ),
