@@ -27,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _mobileController = TextEditingController();
+  // final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
 
   @override
@@ -41,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   CircleAvatar(
                     backgroundImage: File == null
-                        ? AssetImage('assets/nouser.png')
+                        ? const AssetImage('assets/nouser.png')
                         : MemoryImage(File!) as ImageProvider,
                     radius: 70,
                   ),
@@ -79,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Padding(
@@ -87,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.blueAccent),
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(20),
                   ),
                 ),
@@ -95,7 +95,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextFormField(
                     controller: _usernameController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Username',
                       border: InputBorder.none,
                     ),
@@ -103,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Padding(
@@ -111,7 +111,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.blueAccent),
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(20),
                   ),
                 ),
@@ -119,7 +119,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextFormField(
                     controller: _emailController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Email id',
                       border: InputBorder.none,
                     ),
@@ -127,7 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Padding(
@@ -135,7 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.blueAccent),
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(20),
                   ),
                 ),
@@ -143,7 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextFormField(
                     controller: _bioController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Bio',
                       border: InputBorder.none,
                     ),
@@ -151,7 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Padding(
@@ -159,7 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.blue),
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(20),
                   ),
                 ),
@@ -167,7 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextFormField(
                     controller: _passwordController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Password',
                       border: InputBorder.none,
                     ),
@@ -175,7 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Padding(
@@ -183,14 +183,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.blue),
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                     Radius.circular(20),
                   ),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: TextFormField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Retype-Password',
                       border: InputBorder.none,
                     ),
@@ -198,10 +198,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
-            Container(
+            SizedBox(
               width: 200,
               child: SizedBox(
                 height: 43,
@@ -237,19 +237,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           strokeWidth: 2,
                           color: Colors.white,
                         )
-                      : Text('Register'),
+                      : const Text('Register'),
                   style: ElevatedButton.styleFrom(
                       shadowColor: Colors.black, primary: Colors.pink),
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Already have an account?'),
+                const Text('Already have an account?'),
                 TextButton(
                     onPressed: () {
                       Navigator.pushReplacement(

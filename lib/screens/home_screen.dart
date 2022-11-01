@@ -25,42 +25,17 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isLoading = false;
   int selectedIndex = 0;
   List screens = [
-    PostScreen(),
-    ProfileScreen(),
-    Vibrant(),
-    FavouriteScreen(),
-    ChatScreen()
+    const PostScreen(),
+    const ProfileScreen(),
+    const Vibrant(),
+    const FavouriteScreen(),
+    const ChatScreen()
   ];
   @override
   Widget build(BuildContext context) {
     model.User? user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text(
-          'VIBRANT',
-          style: TextStyle(
-              color: Colors.amberAccent,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic),
-        ),
-        actions: [
-          ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.black,
-              ),
-              onPressed: () {
-                _auth.signOut();
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: ((context) => LoginScreen())));
-              },
-              child: const Icon(
-                Icons.exit_to_app,
-                size: 32,
-              ))
-        ],
-      ),
       body: screens[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
           unselectedItemColor: Colors.white,
@@ -73,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
               selectedIndex = value;
             });
           },
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
