@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
-  String? id;
+  String id;
   String username;
   String email;
   List? savedpost;
@@ -10,7 +10,7 @@ class User {
   String? bio;
 
   User(
-      {this.id,
+      {required this.id,
       this.savedpost,
       required this.email,
       required this.password,
@@ -34,7 +34,7 @@ class User {
     return User(
       bio: snapshot['bio'],
       email: snapshot['email'],
-      id: snapshot['uid'],
+      id: snapshot['id'],
       savedpost: snapshot['savedpost'],
       username: snapshot['username'],
       profilePicUrl: snapshot['profilePic'],

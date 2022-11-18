@@ -24,6 +24,10 @@ class _VibrantState extends State<Vibrant> {
     // TODO: implement initState
     super.initState();
     getVideos();
+    // Future.delayed(Duration(seconds: 3), () {
+    //   print('helooooo');
+    //   getVideos();
+    // });
   }
 
   @override
@@ -147,7 +151,9 @@ class _VibrantState extends State<Vibrant> {
     CollectionReference videos = _firestore.collection('videos');
     QuerySnapshot allResults = await videos.get();
     allResults.docs.forEach((DocumentSnapshot result) {
-      reelsoli.add(result.data());
+      setState(() {
+        reelsoli.add(result.data());
+      });
     });
     print(reelsoli.length);
     print(reelsoli);

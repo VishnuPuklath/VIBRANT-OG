@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrant_og/model/user.dart' as model;
 import 'package:vibrant_og/model/post.dart';
@@ -8,6 +9,7 @@ import 'package:vibrant_og/providers/user_provider.dart';
 import 'package:vibrant_og/screens/add_post.dart';
 import 'package:vibrant_og/screens/comments_screen.dart';
 import 'package:vibrant_og/screens/login_screen.dart';
+import 'package:vibrant_og/screens/vibrant.dart';
 
 class PostScreen extends StatefulWidget {
   const PostScreen({Key? key}) : super(key: key);
@@ -19,6 +21,12 @@ class PostScreen extends StatefulWidget {
 class _PostScreenState extends State<PostScreen> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +99,7 @@ class _PostScreenState extends State<PostScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5),
                         child: SizedBox(
+                          height: 400,
                           width: double.infinity,
                           child: Image(
                             fit: BoxFit.contain,
@@ -113,9 +122,12 @@ class _PostScreenState extends State<PostScreen> {
                             ),
                             IconButton(
                                 onPressed: () {
+                                  print(snapshot.data!.docs[index]);
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
-                                    return CommentScreen();
+                                    return CommentScreen(
+                                      snap: snapshot.data!.docs[index],
+                                    );
                                   }));
                                 },
                                 icon: const Icon(
@@ -222,7 +234,7 @@ class _PostScreenState extends State<PostScreen> {
                           child: GestureDetector(
                             onTap: () {
                               print('Comments bottom sheet invoked');
-                              showModel(snapshot.data!.docs[index]['photoUrl']);
+                              showModel(snapshot.data!.docs[index]);
                             },
                             child: const Text(
                               'View all comments',
@@ -264,7 +276,7 @@ class _PostScreenState extends State<PostScreen> {
     );
   }
 
-  showModel(String profilePic) {
+  showModel(var snap) {
     return showBottomSheet(
       context: context,
       builder: (context) {
@@ -292,22 +304,38 @@ class _PostScreenState extends State<PostScreen> {
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: 100,
-                  itemBuilder: ((context, index) {
+                child: StreamBuilder(
+                  stream: _firestore
+                      .collection('posts')
+                      .doc(snap['postId'])
+                      .collection('comments')
+                      .orderBy('datePublished', descending: true)
+                      .snapshots(),
+                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(profilePic),
-                          backgroundColor: Colors.amber,
-                        ),
-                        title: const Text('amazing picture'),
-                        trailing: const Text('08-08-2022'),
+                      child: ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: ((context, index) {
+                          return ListTile(
+                            subtitle: Text(snapshot.data!.docs[index]['text']),
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  snapshot.data!.docs[index]['profilePic']),
+                              backgroundColor: Colors.amber,
+                            ),
+                            title: Text(snapshot.data!.docs[index]['name']),
+                            trailing: Text(DateFormat.yMMMd().format(snapshot
+                                .data!.docs[index]['datePublished']
+                                .toDate())),
+                          );
+                        }),
                       ),
                     );
-                  }),
+                  },
                 ),
               ),
             ],
