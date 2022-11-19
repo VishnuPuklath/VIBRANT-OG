@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vibrant_og/screens/login_screen.dart';
+import 'package:vibrant_og/screens/singlechat_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -102,7 +103,15 @@ class _ChatScreenState extends State<ChatScreen> {
                     trailing: ElevatedButton(
                       style: ElevatedButton.styleFrom(primary: Colors.black),
                       child: Text('Message'),
-                      onPressed: () {},
+                      onPressed: () {
+                        print(users[0]);
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return SingleChatScreen(
+                            user: users[0],
+                          );
+                        }));
+                      },
                     ),
                     subtitle: Text(users[0]['email']),
                     leading: CircleAvatar(

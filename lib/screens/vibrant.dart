@@ -24,10 +24,6 @@ class _VibrantState extends State<Vibrant> {
     // TODO: implement initState
     super.initState();
     getVideos();
-    // Future.delayed(Duration(seconds: 3), () {
-    //   print('helooooo');
-    //   getVideos();
-    // });
   }
 
   @override
@@ -87,7 +83,7 @@ class _VibrantState extends State<Vibrant> {
                 pickVideo(ImageSource.gallery, context);
               },
               child: Row(
-                children: [
+                children: const [
                   Icon(Icons.image),
                   Padding(
                     padding: EdgeInsets.all(7.0),

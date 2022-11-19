@@ -1,0 +1,178 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/key.dart';
+import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/src/widgets/framework.dart';
+
+class SingleChatScreen extends StatefulWidget {
+  var user;
+  SingleChatScreen({Key? key, required this.user}) : super(key: key);
+
+  @override
+  State<SingleChatScreen> createState() => _SingleChatScreenState();
+}
+
+class _SingleChatScreenState extends State<SingleChatScreen> {
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  TextEditingController _messageController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    String docid = _auth.currentUser!.uid + widget.user['id'];
+
+    return Scaffold(
+      body: Column(children: [
+        Expanded(
+            child: StreamBuilder(
+          stream: _firestore
+              .collection('chats')
+              .doc(docid)
+              .collection('messages')
+              .snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: ((context, index) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(10)),
+                        height: 45,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            snapshot.data!.docs[index]['messageText'],
+                            style: TextStyle(fontSize: 25),
+                          ),
+                        ),
+                      ),
+                      Divider()
+                    ],
+                  );
+                }),
+              );
+            } else {
+              return Container(
+                child: Center(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text(
+                      'Say hi',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    Image(
+                      width: 50,
+                      image: NetworkImage(
+                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdvdvtLfx2WS-CGMuknyReleJDt5Np8X3WB1lBqyaMTyCptopMM_L8waea9edVQKnRBtc&usqp=CAU'),
+                    )
+                  ],
+                )),
+              );
+            }
+          },
+        )),
+        Row(
+          children: [
+            Expanded(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.black),
+                  ),
+                  child: TextFormField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.only(left: 20)),
+                  )),
+            )),
+            Padding(
+              padding: const EdgeInsets.only(left: 5, right: 10),
+              child: Container(
+                height: 45,
+                child: ElevatedButton(
+                  style:
+                      ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                  onPressed: () {
+                    if (_messageController.text.isNotEmpty) {
+                      try {
+                        _firestore
+                            .collection('chats')
+                            .doc(_auth.currentUser!.uid + widget.user['id'])
+                            .collection('messages')
+                            .doc()
+                            .set({
+                          'messageText': _messageController.text,
+                          'sender': _auth.currentUser!.email,
+                          'receiver': widget.user['email']
+                        });
+                        setState(() {
+                          _messageController.clear();
+                        });
+                      } catch (e) {
+                        print(e.toString());
+                      }
+                    } else {
+                      print('no text');
+                    }
+                  },
+                  child: Text('SEND'),
+                ),
+              ),
+            )
+          ],
+        )
+      ]),
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        leading: Padding(
+          padding: EdgeInsets.only(left: 15, top: 5, bottom: 5),
+          child: CircleAvatar(
+              radius: 15,
+              backgroundImage: NetworkImage(widget.user['profilePic'])),
+        ),
+        title: Text(widget.user['username']),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  Container(
+//           child: Center(
+//               child: Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: const [
+//               Text(
+//                 'Say hi',
+//                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+//               ),
+//               Image(
+//                 width: 50,
+//                 image: NetworkImage(
+//                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdvdvtLfx2WS-CGMuknyReleJDt5Np8X3WB1lBqyaMTyCptopMM_L8waea9edVQKnRBtc&usqp=CAU'),
+//               )
+//             ],
+//           )),
+//         )
