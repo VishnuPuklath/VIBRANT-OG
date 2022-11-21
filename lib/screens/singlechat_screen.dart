@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class SingleChatScreen extends StatefulWidget {
   var user;
@@ -20,16 +24,19 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String docid = _auth.currentUser!.uid + widget.user['id'];
+    String docid = Uuid().v1();
 
     return Scaffold(
       body: Column(children: [
         Expanded(
             child: StreamBuilder(
           stream: _firestore
+              .collection('users')
+              .doc(_auth.currentUser!.uid)
               .collection('chats')
-              .doc(docid)
+              .doc(widget.user['id'])
               .collection('messages')
+              .orderBy('Date')
               .snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasData) {
@@ -37,7 +44,10 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: ((context, index) {
                   return Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: snapshot.data!.docs[index]['sender'] !=
+                            _auth.currentUser!.email
+                        ? CrossAxisAlignment.start
+                        : CrossAxisAlignment.end,
                     children: [
                       Container(
                         decoration: BoxDecoration(
@@ -47,7 +57,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            snapshot.data!.docs[index]['messageText'],
+                            snapshot.data!.docs[index]['text'],
                             style: TextStyle(fontSize: 25),
                           ),
                         ),
@@ -91,7 +101,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                   ),
                   child: TextFormField(
                     controller: _messageController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.only(left: 20)),
                   )),
@@ -106,16 +116,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                   onPressed: () {
                     if (_messageController.text.isNotEmpty) {
                       try {
-                        _firestore
-                            .collection('chats')
-                            .doc(_auth.currentUser!.uid + widget.user['id'])
-                            .collection('messages')
-                            .doc()
-                            .set({
-                          'messageText': _messageController.text,
-                          'sender': _auth.currentUser!.email,
-                          'receiver': widget.user['email']
-                        });
+                        toCurrentChatCollection();
+                        toReceiverChatCollection();
+
                         setState(() {
                           _messageController.clear();
                         });
@@ -136,7 +139,7 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: Padding(
-          padding: EdgeInsets.only(left: 15, top: 5, bottom: 5),
+          padding: const EdgeInsets.only(left: 15, top: 5, bottom: 5),
           child: CircleAvatar(
               radius: 15,
               backgroundImage: NetworkImage(widget.user['profilePic'])),
@@ -145,7 +148,37 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       ),
     );
   }
+
+  void toCurrentChatCollection() async {
+    await _firestore
+        .collection('users')
+        .doc(_auth.currentUser!.uid)
+        .collection('chats')
+        .doc(widget.user['id'])
+        .collection('messages')
+        .add({
+      'text': _messageController.text,
+      'sender': _auth.currentUser!.email,
+      'Date': DateTime.now(),
+    });
+  }
+
+  void toReceiverChatCollection() async {
+    await _firestore
+        .collection('users')
+        .doc(widget.user['id'])
+        .collection('chats')
+        .doc(_auth.currentUser!.uid)
+        .collection('messages')
+        .add({
+      'text': _messageController.text,
+      'sender': _auth.currentUser!.email,
+      'Date': DateTime.now(),
+    });
+  }
 }
+
+
 
 
 

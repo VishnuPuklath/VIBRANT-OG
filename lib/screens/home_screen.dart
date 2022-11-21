@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrant_og/model/user.dart' as model;
 import 'package:vibrant_og/providers/user_provider.dart';
+import 'package:vibrant_og/screens/chatlist_screen.dart';
 import 'package:vibrant_og/screens/chatscreen.dart';
 import 'package:vibrant_og/screens/favourites.dart';
 import 'package:vibrant_og/screens/login_screen.dart';
@@ -28,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const PostScreen(),
     const ProfileScreen(),
     const Vibrant(),
-    const FavouriteScreen(),
+    const ChatListScreen(),
     const ChatScreen()
   ];
   @override
@@ -56,10 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
             BottomNavigationBarItem(
                 icon: Icon(Icons.video_call_rounded), label: 'Vibrants'),
+            BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Chats'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.favorite_outline_rounded),
-                label: 'favourites'),
-            BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'chats')
+                icon: Icon(Icons.vibration), label: 'shakeNchat')
           ]),
     );
   }
