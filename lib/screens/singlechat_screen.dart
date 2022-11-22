@@ -7,7 +7,10 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:vibrant_og/model/user.dart' as model;
+import 'package:vibrant_og/providers/user_provider.dart';
 
 class SingleChatScreen extends StatefulWidget {
   var user;
@@ -21,9 +24,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController _messageController = TextEditingController();
+  model.User? user;
 
   @override
   Widget build(BuildContext context) {
+    user = Provider.of<UserProvider>(context).getUser;
     String docid = Uuid().v1();
 
     return Scaffold(
@@ -113,9 +118,10 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
                 child: ElevatedButton(
                   style:
                       ElevatedButton.styleFrom(backgroundColor: Colors.black),
-                  onPressed: () {
+                  onPressed: () async {
                     if (_messageController.text.isNotEmpty) {
                       try {
+                        toChatList(_messageController.text);
                         toCurrentChatCollection();
                         toReceiverChatCollection();
 
@@ -174,6 +180,35 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
       'text': _messageController.text,
       'sender': _auth.currentUser!.email,
       'Date': DateTime.now(),
+    });
+  }
+
+  void toChatList(String msgTXT) async {
+    String msgTxt = msgTXT;
+    await _firestore
+        .collection('userChatList')
+        .doc(_auth.currentUser!.uid)
+        .collection('message')
+        .doc(widget.user['id'])
+        .set({
+      'sname': _auth.currentUser!.email,
+      'rname': widget.user['email'],
+      'text': msgTXT,
+      'rpic': widget.user['profilePic'],
+      'spic': user!.profilePicUrl,
+    });
+
+    await _firestore
+        .collection('userChatList')
+        .doc(widget.user['id'])
+        .collection('message')
+        .doc(_auth.currentUser!.uid)
+        .set({
+      'sname': _auth.currentUser!.email,
+      'rname': widget.user['email'],
+      'text': msgTXT,
+      'rpic': widget.user['profilePic'],
+      'spic': user!.profilePicUrl,
     });
   }
 }
