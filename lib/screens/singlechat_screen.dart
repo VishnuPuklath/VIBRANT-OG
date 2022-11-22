@@ -25,6 +25,11 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController _messageController = TextEditingController();
   model.User? user;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +197,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         .doc(widget.user['id'])
         .set({
       'sname': _auth.currentUser!.email,
-      'rname': widget.user['email'],
+      'sid': _auth.currentUser!.uid,
+      'email': widget.user['email'],
+      'id': widget.user['id'],
       'text': msgTXT,
       'rpic': widget.user['profilePic'],
       'spic': user!.profilePicUrl,
@@ -205,7 +212,9 @@ class _SingleChatScreenState extends State<SingleChatScreen> {
         .doc(_auth.currentUser!.uid)
         .set({
       'sname': _auth.currentUser!.email,
-      'rname': widget.user['email'],
+      'id': _auth.currentUser!.uid,
+      'email': widget.user['email'],
+      'rid': widget.user['id'],
       'text': msgTXT,
       'rpic': widget.user['profilePic'],
       'spic': user!.profilePicUrl,

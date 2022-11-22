@@ -8,6 +8,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrant_og/providers/user_provider.dart';
+import 'package:vibrant_og/screens/singlechat_screen.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({Key? key}) : super(key: key);
@@ -38,43 +39,71 @@ class _ChatListScreenState extends State<ChatListScreen> {
               return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: ((context, index) {
-                    return snapshot.data!.docs[index]['rname'] ==
+                    return snapshot.data!.docs[index]['email'] ==
                             _auth.currentUser!.email
-                        ? Column(
-                            children: [
-                              ListTile(
-                                leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        snapshot.data!.docs[index]['spic'])),
-                                title: Center(
-                                    child: Text(
-                                        snapshot.data!.docs[index]['sname'])),
-                                subtitle: Center(
-                                    child: Text(
-                                        snapshot.data!.docs[index]['text'])),
-                              ),
-                              const Divider(
-                                color: Colors.black,
-                              )
-                            ],
+                        ? InkWell(
+                            onTap: () async {
+                              var usero = await _firestore
+                                  .collection('users')
+                                  .doc(snapshot.data!.docs[index]['id'])
+                                  .get()
+                                  .then((DocumentSnapshot) =>
+                                      DocumentSnapshot.data());
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return SingleChatScreen(user: usero);
+                              }));
+                            },
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  leading: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          snapshot.data!.docs[index]['spic'])),
+                                  title: Center(
+                                      child: Text(
+                                          snapshot.data!.docs[index]['sname'])),
+                                  subtitle: Center(
+                                      child: Text(
+                                          snapshot.data!.docs[index]['text'])),
+                                ),
+                                const Divider(
+                                  color: Colors.black,
+                                )
+                              ],
+                            ),
                           )
-                        : Column(
-                            children: [
-                              ListTile(
-                                leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        snapshot.data!.docs[index]['rpic'])),
-                                title: Center(
-                                    child: Text(
-                                        snapshot.data!.docs[index]['rname'])),
-                                subtitle: Center(
-                                    child: Text(
-                                        snapshot.data!.docs[index]['text'])),
-                              ),
-                              const Divider(
-                                color: Colors.black,
-                              )
-                            ],
+                        : InkWell(
+                            onTap: () async {
+                              var usero = await _firestore
+                                  .collection('users')
+                                  .doc(snapshot.data!.docs[index]['id'])
+                                  .get()
+                                  .then((DocumentSnapshot) =>
+                                      DocumentSnapshot.data());
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return SingleChatScreen(user: usero);
+                              }));
+                            },
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  leading: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          snapshot.data!.docs[index]['rpic'])),
+                                  title: Center(
+                                      child: Text(
+                                          snapshot.data!.docs[index]['email'])),
+                                  subtitle: Center(
+                                      child: Text(
+                                          snapshot.data!.docs[index]['text'])),
+                                ),
+                                const Divider(
+                                  color: Colors.black,
+                                )
+                              ],
+                            ),
                           );
                   }));
             } else {
