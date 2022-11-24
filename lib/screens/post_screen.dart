@@ -72,190 +72,162 @@ class _PostScreenState extends State<PostScreen> {
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Column(children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              backgroundImage: Image.network(
-                                snapshot.data!.docs[index]['photoUrl'],
-                              ).image,
-                              backgroundColor: Colors.white,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              snapshot.data!.docs[index]['username'],
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: SizedBox(
-                          height: 400,
-                          width: double.infinity,
-                          child: Image(
-                            fit: BoxFit.contain,
-                            image: NetworkImage(
-                              snapshot.data!.docs[index]['postUrl'],
-                            ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: Column(children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: Image.network(
+                                  snapshot.data!.docs[index]['photoUrl'],
+                                ).image,
+                                backgroundColor: Colors.white,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                snapshot.data!.docs[index]['username'],
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.favorite,
-                                color: Colors.red,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: SizedBox(
+                            height: 400,
+                            width: double.infinity,
+                            child: Image(
+                              fit: BoxFit.fill,
+                              image: NetworkImage(
+                                snapshot.data!.docs[index]['postUrl'],
                               ),
                             ),
-                            IconButton(
-                                onPressed: () {
-                                  print(snapshot.data!.docs[index]);
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) {
-                                    return CommentScreen(
-                                      snap: snapshot.data!.docs[index],
-                                    );
-                                  }));
-                                },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {},
                                 icon: const Icon(
-                                  Icons.comment,
-                                  color: Colors.black,
-                                )),
-                            snapshot.data!.docs[index]['uid'] ==
-                                    _auth.currentUser!.uid
-                                ? IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: const Text(
-                                                  'Are you sure you want to delete this post?'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    _firestore
-                                                        .collection('posts')
-                                                        .doc(snapshot.data!
-                                                                .docs[index]
-                                                            ['postId'])
-                                                        .delete();
-                                                    Navigator.pop(context);
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                            const SnackBar(
-                                                                backgroundColor:
-                                                                    Colors.red,
-                                                                content: Text(
-                                                                    'Post Deleted')));
-                                                  },
-                                                  child: const Text(
-                                                    'Yes',
-                                                    style: TextStyle(
-                                                        color: Colors.red),
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                ),
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    print(snapshot.data!.docs[index]);
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return CommentScreen(
+                                        snap: snapshot.data!.docs[index],
+                                      );
+                                    }));
+                                  },
+                                  icon: const Icon(
+                                    Icons.comment,
+                                    color: Colors.black,
+                                  )),
+                              snapshot.data!.docs[index]['uid'] ==
+                                      _auth.currentUser!.uid
+                                  ? IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                    'Are you sure you want to delete this post?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      _firestore
+                                                          .collection('posts')
+                                                          .doc(snapshot.data!
+                                                                  .docs[index]
+                                                              ['postId'])
+                                                          .delete();
+                                                      Navigator.pop(context);
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                              const SnackBar(
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .red,
+                                                                  content: Text(
+                                                                      'Post Deleted')));
+                                                    },
+                                                    child: const Text(
+                                                      'Yes',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
                                                   ),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text(
-                                                    'No',
-                                                    style: TextStyle(
-                                                        color: Colors.green),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text(
+                                                      'No',
+                                                      style: TextStyle(
+                                                          color: Colors.green),
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            );
-                                          });
-                                    },
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ))
-                                : const SizedBox(),
-                            IconButton(
-                              onPressed: () async {
-                                String PostId =
-                                    snapshot.data!.docs[index]['postId'];
-                                print(PostId);
-                                DocumentSnapshot snapshots = await _firestore
-                                    .collection('users')
-                                    .doc(_auth.currentUser!.uid)
-                                    .get();
-
-                                print(
-                                  snapshots.get('savedpost'),
-                                );
-                                var savedpost = snapshots.get('savedpost');
-
-                                saveVibe(snapshot.data!.docs[index]['postId'],
-                                    savedpost, context);
+                                                ],
+                                              );
+                                            });
+                                      },
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ))
+                                  : const SizedBox(),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Row(
+                            children: [
+                              Text(
+                                snapshot.data!.docs[index]['username'] + ': ',
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                              Text(
+                                snapshot.data!.docs[index]['description'],
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Align(
+                            alignment: Alignment.bottomLeft,
+                            child: GestureDetector(
+                              onTap: () {
+                                print('Comments bottom sheet invoked');
+                                showModel(snapshot.data!.docs[index]);
                               },
-                              icon: Icon(Icons.save),
-                              color: Colors.black,
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Row(
-                          children: [
-                            Text(
-                              snapshot.data!.docs[index]['username'] + ': ',
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                            Text(
-                              snapshot.data!.docs[index]['description'],
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Align(
-                          alignment: Alignment.bottomLeft,
-                          child: GestureDetector(
-                            onTap: () {
-                              print('Comments bottom sheet invoked');
-                              showModel(snapshot.data!.docs[index]);
-                            },
-                            child: const Text(
-                              'View all comments',
-                              style: TextStyle(color: Colors.grey),
+                              child: const Text(
+                                'View all comments',
+                                style: TextStyle(color: Colors.grey),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Align(
-                          alignment: Alignment.bottomLeft,
-                          child: Text(
-                            snapshot.data!.docs[index]['description'],
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ),
-                      )
-                    ]),
-                  ),
-                );
+                        const Divider(
+                          height: 2,
+                        )
+                      ]),
+                    ));
               },
             );
           }

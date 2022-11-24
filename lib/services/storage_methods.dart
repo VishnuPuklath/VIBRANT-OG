@@ -32,7 +32,8 @@ class StorageMethods {
     return downloadUrl;
   }
 
-  uploadVideo(String description, String videoPath) async {
+  Future<String> uploadVideo(String description, String videoPath) async {
+    String res = 'upload failed';
     try {
       String uid = _firebaseAuth.currentUser!.uid;
       DocumentSnapshot userDoc =
@@ -49,7 +50,11 @@ class StorageMethods {
           videoUrl: videoUrl,
           description: description);
       await firestore.collection('videos').doc('video $len').set(vibe.toJson());
-    } catch (e) {}
+      res = 'success';
+    } catch (e) {
+      res = e.toString();
+    }
+    return res;
   }
 
   Future<String> _uploadVideoToStorage(String id, String videoPath) async {

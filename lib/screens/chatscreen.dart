@@ -130,7 +130,9 @@ class _ChatScreenState extends State<ChatScreen> {
     await for (var snapshot
         in FirebaseFirestore.instance.collection('users').snapshots()) {
       for (var user in snapshot.docs) {
-        users.add(user.data());
+        if (user.id != _auth.currentUser!.uid) {
+          users.add(user.data());
+        }
       }
       setState(() {
         randomUser = (users..shuffle()).first;
