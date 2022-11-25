@@ -60,14 +60,19 @@ class StorageMethods {
   Future<String> _uploadVideoToStorage(String id, String videoPath) async {
     Reference ref = _firebaseStorage.ref().child('Videos').child(id);
     UploadTask uploadTask = ref.putFile(
-      await _compressVideo(videoPath),
+      await _compressVideo2(videoPath),
     );
     TaskSnapshot snap = await uploadTask;
     String downloadUrl = await snap.ref.getDownloadURL();
     return downloadUrl;
   }
 
-  _compressVideo(String videoPath) async {
+  // _compressVideo(String videoPath) async {
+  //   final compressedVideo = await VideoCompress.compressVideo(videoPath,
+  //       quality: VideoQuality.MediumQuality);
+  //   return compressedVideo!.file;
+  // }
+  _compressVideo2(String videoPath) async {
     final compressedVideo = await VideoCompress.compressVideo(videoPath,
         quality: VideoQuality.MediumQuality);
     return compressedVideo!.file;

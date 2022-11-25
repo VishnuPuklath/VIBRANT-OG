@@ -63,9 +63,10 @@ class _VibrantState extends State<Vibrant> {
           itemCount: reelsoli.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
-            print(reelsoli[index]['username']);
+            print(reelsoli[index]);
             return Container(
-              child: VideoPlayerWid(videoloc: reelsoli[index]['videoUrl']),
+              child: VideoPlayerWid(
+                  videoloc: reelsoli[index]['videoUrl'], detu: reelsoli[index]),
             );
             ;
           }),

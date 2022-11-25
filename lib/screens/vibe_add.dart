@@ -80,6 +80,7 @@ class _VibeAddState extends State<VibeAdd> {
                 if (_descriptionController.text.isNotEmpty) {
                   String res = await StorageMethods().uploadVideo(
                       _descriptionController.text, widget.videoPath);
+                  print('res from vibe add' + res);
                   if (res == 'success') {
                     setState(() {
                       isLoading = false;
@@ -94,7 +95,7 @@ class _VibeAddState extends State<VibeAdd> {
                 }
               },
               child: isLoading
-                  ? CircularProgressIndicator(color: Colors.white)
+                  ? const CircularProgressIndicator(color: Colors.white)
                   : const Text('Post Vibe'),
             ),
           ),
