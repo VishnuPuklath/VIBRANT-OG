@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+import 'package:vibrant_og/screens/admindashboard_screen.dart';
 import 'package:vibrant_og/screens/home_screen.dart';
 import 'package:vibrant_og/screens/login_fetch.dart';
 import 'package:vibrant_og/screens/register_screen.dart';
@@ -111,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 String res = await AuthMethods().login(
                     email: _emailController.text,
                     password: _PasswordController.text);
-                if (res != 'success') {
+                if (res != 'user' && res != 'admin') {
                   Future.delayed(
                       const Duration(
                         seconds: 1,
@@ -128,12 +129,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   );
                 }
-                if (res == 'success') {
+                if (res == 'user') {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) {
                         return LoginFetchScreen();
+                      },
+                    ),
+                  );
+                } else if (res == 'admin') {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return AdminDashboard();
                       },
                     ),
                   );

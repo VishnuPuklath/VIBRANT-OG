@@ -41,15 +41,18 @@ class StorageMethods {
 
       //get id
       var allDocs = await firestore.collection('videos').get();
-      int len = allDocs.docs.length;
-      String videoUrl = await _uploadVideoToStorage('Video $len', videoPath);
+
+      String vid = Uuid().v1();
+      String videoUrl = await _uploadVideoToStorage(vid, videoPath);
       Vibe vibe = Vibe(
+          id: vid,
+          email: (userDoc.data()! as Map<String, dynamic>)['email'],
           username: (userDoc.data()! as Map<String, dynamic>)['username'],
           profilePicUrl:
               (userDoc.data()! as Map<String, dynamic>)['profilePic'],
           videoUrl: videoUrl,
           description: description);
-      await firestore.collection('videos').doc('video $len').set(vibe.toJson());
+      await firestore.collection('videos').doc(vid).set(vibe.toJson());
       res = 'success';
     } catch (e) {
       res = e.toString();
@@ -72,12 +75,10 @@ class StorageMethods {
   //       quality: VideoQuality.MediumQuality);
   //   return compressedVideo!.file;
   // }
+
   _compressVideo2(String videoPath) async {
     final compressedVideo = await VideoCompress.compressVideo(videoPath,
         quality: VideoQuality.MediumQuality);
     return compressedVideo!.file;
   }
 }
-
-
-//  username: (userDoc.data()! as Map<String, dynamic>)['name'],

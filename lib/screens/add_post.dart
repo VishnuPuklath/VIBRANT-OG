@@ -196,6 +196,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
           await StorageMethods().uploadImageToStorage('posts', file, true);
       String postId = Uuid().v1();
       Post post = Post(
+          likes: [],
           uid: uid,
           postId: postId,
           photoUrl: profilePic,

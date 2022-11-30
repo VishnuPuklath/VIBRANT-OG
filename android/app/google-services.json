@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "144226273290",
-    "project_id": "vibrant-og-b9ddd",
-    "storage_bucket": "vibrant-og-b9ddd.appspot.com"
+    "project_number": "190526230416",
+    "project_id": "vibrant-og-dc891",
+    "storage_bucket": "vibrant-og-dc891.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:144226273290:android:64e69a059476dafebb77f3",
+        "mobilesdk_app_id": "1:190526230416:android:f920670b19490d75be6d15",
         "android_client_info": {
           "package_name": "com.dope.vibrant_og"
         }
       },
       "oauth_client": [
         {
-          "client_id": "144226273290-tpeqv2pouiepj00vjp3tqv9lo8752nqj.apps.googleusercontent.com",
+          "client_id": "190526230416-6chu7rulc2t4n49st0l7rqacpnoldc6d.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD3i7wfJ3zTVmAlJTetcrZ9GdqkMQ2rv3g"
+          "current_key": "AIzaSyBBCtQXzg-ToUjG7JpUokOmPJxQT6G3s8Y"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "144226273290-tpeqv2pouiepj00vjp3tqv9lo8752nqj.apps.googleusercontent.com",
+              "client_id": "190526230416-6chu7rulc2t4n49st0l7rqacpnoldc6d.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

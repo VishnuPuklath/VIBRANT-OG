@@ -31,8 +31,13 @@ class _LoginFetchScreenState extends State<LoginFetchScreen> {
   void getData() async {
     UserProvider _userProvider = Provider.of(context, listen: false);
     await _userProvider.refreshUser();
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (contex) {
-      return HomeScreen();
-    }));
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (contex) {
+          return HomeScreen();
+        },
+      ),
+    );
   }
 }

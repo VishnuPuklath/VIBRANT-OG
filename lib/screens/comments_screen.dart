@@ -37,7 +37,7 @@ class _CommentScreenState extends State<CommentScreen> {
                   .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                       child: CircularProgressIndicator(
                     color: Colors.white,
                   ));
@@ -47,9 +47,49 @@ class _CommentScreenState extends State<CommentScreen> {
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: ((context, index) {
                       return ListTile(
-                        trailing: Text(DateFormat.yMMMd().format(snapshot
-                            .data!.docs[index]['datePublished']
-                            .toDate())),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              DateFormat.yMMMd().format(snapshot
+                                  .data!.docs[index]['datePublished']
+                                  .toDate()),
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            InkWell(
+                              onTap: (() {
+                                print('comment liked');
+                                try {
+                                  likePostComment(
+                                      commentId: snapshot.data!.docs[index]
+                                          ['commentId'],
+                                      likes: snapshot.data!.docs[index]
+                                          ['likes'],
+                                      postId: widget.snap['postId'],
+                                      uid: snapshot.data!.docs[index]['uid']);
+                                } catch (e) {
+                                  print(e.toString());
+                                }
+                              }),
+                              child: snapshot.data!.docs[index]['likes']
+                                      .contains(user.id)
+                                  ? Icon(
+                                      Icons.favorite,
+                                      size: 17,
+                                      color: Colors.red,
+                                    )
+                                  : Icon(
+                                      Icons.favorite_border_outlined,
+                                      size: 17,
+                                    ),
+                            ),
+                            Text(
+                              snapshot.data!.docs[index]['likes'].length
+                                  .toString(),
+                              style: TextStyle(fontSize: 10),
+                            )
+                          ],
+                        ),
                         leading: CircleAvatar(
                           backgroundImage: NetworkImage(
                               snapshot.data!.docs[index]['profilePic']),
@@ -109,5 +149,35 @@ class _CommentScreenState extends State<CommentScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> likePostComment(
+      {required String commentId,
+      required String postId,
+      required String uid,
+      required List likes}) async {
+    try {
+      if (likes.contains(uid)) {
+        _firestore
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .update({
+          'likes': FieldValue.arrayRemove([uid]),
+        });
+      } else {
+        _firestore
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .doc(commentId)
+            .update({
+          'likes': FieldValue.arrayUnion([uid]),
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

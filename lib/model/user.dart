@@ -4,14 +4,14 @@ class User {
   String id;
   String username;
   String email;
-  List? savedpost;
+  String role;
   String password;
   String? profilePicUrl;
   String? bio;
 
   User(
       {required this.id,
-      this.savedpost,
+      this.role = 'user',
       required this.email,
       required this.password,
       required this.username,
@@ -19,7 +19,7 @@ class User {
       this.bio});
 
   Map<String, dynamic> toJson() => {
-        'savedpost': savedpost,
+        'role': role,
         'id': id,
         'bio': bio,
         'username': username,
@@ -32,10 +32,10 @@ class User {
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return User(
+      role: snapshot['role'],
       bio: snapshot['bio'],
       email: snapshot['email'],
       id: snapshot['id'],
-      savedpost: snapshot['savedpost'],
       username: snapshot['username'],
       profilePicUrl: snapshot['profilePic'],
       password: snapshot['password'],

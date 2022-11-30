@@ -15,6 +15,7 @@ class FirestoreMethod {
             .collection('comments')
             .doc(commentId)
             .set({
+          'likes': [],
           'profilePic': profilePic,
           'name': name,
           'text': text,

@@ -68,7 +68,6 @@ class _VibrantState extends State<Vibrant> {
               child: VideoPlayerWid(
                   videoloc: reelsoli[index]['videoUrl'], detu: reelsoli[index]),
             );
-            ;
           }),
     );
   }

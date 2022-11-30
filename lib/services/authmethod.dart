@@ -43,9 +43,16 @@ class AuthMethods {
   Future<String> login({required email, required password}) async {
     String res = 'Error while logging';
     try {
-      UserCredential user = await _auth.signInWithEmailAndPassword(
+      UserCredential cred = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      res = 'success';
+      DocumentSnapshot snap =
+          await _firestore.collection('users').doc(cred.user!.uid).get();
+      String role = snap['role'];
+      if (role == 'user') {
+        res = 'user';
+      } else if (role == 'admin') {
+        res = 'admin';
+      }
     } on FirebaseException catch (e) {
       res = e.message.toString();
     }

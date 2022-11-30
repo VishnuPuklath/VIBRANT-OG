@@ -8,9 +8,11 @@ class Post {
   String photoUrl;
   String datePublished;
   String postUrl;
+  final likes;
 
   Post(
       {required this.postId,
+      required this.likes,
       required this.uid,
       required this.postUrl,
       required this.username,
@@ -19,6 +21,7 @@ class Post {
       required this.datePublished});
 
   Map<String, dynamic> toJson() => {
+        'likes': likes,
         'postId': postId,
         'uid': uid,
         'username': username,
@@ -31,6 +34,7 @@ class Post {
   static Post fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     return Post(
+        likes: snapshot['likes'],
         uid: snapshot['uid'],
         postId: snapshot['postId'],
         postUrl: snapshot['username'],
