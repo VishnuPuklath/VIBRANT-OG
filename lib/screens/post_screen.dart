@@ -120,27 +120,26 @@ class _PostScreenState extends State<PostScreen> {
                               child: Row(
                                 children: [
                                   IconButton(
-                                    onPressed: () async {
-                                      print('liked post');
-                                      likePost(
-                                          postId: snapshot.data!.docs[index]
-                                              ['postId'],
-                                          likes: snapshot.data!.docs[index]
-                                              ['likes'],
-                                          uid: snapshot.data!.docs[index]
-                                              ['uid']);
-                                    },
-                                    icon: snapshot.data!.docs[index]['likes']
-                                            .contains(user.id)
-                                        ? Icon(
-                                            Icons.favorite,
-                                            color: Colors.red,
-                                          )
-                                        : Icon(
-                                            Icons.favorite_border_outlined,
-                                            color: Colors.red,
-                                          ),
-                                  ),
+                                      onPressed: () async {
+                                        print(user.id);
+                                        print('liked post');
+                                        likePost(
+                                            postId: snapshot.data!.docs[index]
+                                                ['postId'],
+                                            likes: snapshot.data!.docs[index]
+                                                ['likes'],
+                                            uid: user.id);
+                                      },
+                                      icon: snapshot.data!.docs[index]['likes']
+                                              .contains(user.id)
+                                          ? Icon(
+                                              Icons.favorite,
+                                              color: Colors.red,
+                                            )
+                                          : Icon(
+                                              Icons.favorite_border_outlined,
+                                              color: Colors.red,
+                                            )),
                                   IconButton(
                                       onPressed: () {
                                         print(snapshot.data!.docs[index]);
@@ -219,6 +218,157 @@ class _PostScreenState extends State<PostScreen> {
                                             color: Colors.red,
                                           ))
                                       : const SizedBox(),
+                                  Spacer(),
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: ((context) {
+                                            return AlertDialog(
+                                              title: Text('Report Post'),
+                                              content: const Text(
+                                                  'Do you want to report this post to admin'),
+                                              actions: [
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return AlertDialog(
+                                                            content: Container(
+                                                              height: 250,
+                                                              child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Why are you reporting this post ?',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.red),
+                                                                    ),
+                                                                    const Divider(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                    ),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        print(
+                                                                            'its a scam');
+                                                                        // postReport(
+                                                                        //     email: user
+                                                                        //         .email,
+                                                                        //     reason:
+                                                                        //         'its a scam',
+                                                                        //     postId:
+                                                                        //         snapshot.data!.docs[index]['postId']);
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                      child: const Text(
+                                                                          'Its a Scam'),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          17,
+                                                                    ),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        print(
+                                                                            'Nudity ');
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                      child: const Text(
+                                                                          'Nudity or sexual activity'),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          17,
+                                                                    ),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        print(
+                                                                            'Hate speech');
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                      child: const Text(
+                                                                          'Hate speech or symbol'),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          17,
+                                                                    ),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        print(
+                                                                            'False Information');
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                      child: const Text(
+                                                                          'False Information'),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          17,
+                                                                    ),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        print(
+                                                                            'Violence');
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                      child: const Text(
+                                                                          'Violence'),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          17,
+                                                                    ),
+                                                                    InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        print(
+                                                                            'Something else');
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                      child: const Text(
+                                                                          'Something else'),
+                                                                    ),
+                                                                  ]),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    child: Text('Yes')),
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('No'))
+                                              ],
+                                            );
+                                          }));
+                                    },
+                                    icon: Icon(
+                                      Icons.flag,
+                                      color: Colors.white,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
@@ -360,43 +510,17 @@ class _PostScreenState extends State<PostScreen> {
     );
   }
 
-  void saveVibe(String postId, List saved, BuildContext context) async {
-    try {
-      if (saved.contains(postId)) {
-        await _firestore
-            .collection('users')
-            .doc(_auth.currentUser!.uid)
-            .update({
-          'savedpost': FieldValue.arrayRemove([postId])
-        });
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('unsaved')));
-      } else {
-        await _firestore
-            .collection('users')
-            .doc(_auth.currentUser!.uid)
-            .update({
-          'savedpost': FieldValue.arrayUnion([postId])
-        });
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('saved')));
-      }
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
   Future<void> likePost(
       {required String postId,
       required String uid,
       required List likes}) async {
     try {
       if (likes.contains(uid)) {
-        _firestore.collection('posts').doc(postId).update({
+        await _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayRemove([uid]),
         });
       } else {
-        _firestore.collection('posts').doc(postId).update({
+        await _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayUnion([uid]),
         });
       }
@@ -404,4 +528,20 @@ class _PostScreenState extends State<PostScreen> {
       print(e.toString());
     }
   }
+
+  // void postReport(
+  //     {required String postId,
+  //     required reports,
+  //     required String reason,
+  //     required String email}) async {
+  //   try {
+  //     _firestore.collection('posts').doc(postId).update({
+  //       'reports': {'reason': reason, 'reported by': email}
+  //     });
+  //     ScaffoldMessenger.of(context)
+  //         .showSnackBar(SnackBar(content: Text('Reported')));
+  //   } catch (e) {
+  //     print(e.toString());
+  //   }
+  // }
 }
