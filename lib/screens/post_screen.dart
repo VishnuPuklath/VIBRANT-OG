@@ -31,6 +31,7 @@ class _PostScreenState extends State<PostScreen> {
   @override
   Widget build(BuildContext context) {
     model.User? user = Provider.of<UserProvider>(context).getUser;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -221,153 +222,23 @@ class _PostScreenState extends State<PostScreen> {
                                   Spacer(),
                                   IconButton(
                                     onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: ((context) {
-                                            return AlertDialog(
-                                              title: Text('Report Post'),
-                                              content: const Text(
-                                                  'Do you want to report this post to admin'),
-                                              actions: [
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (context) {
-                                                          return AlertDialog(
-                                                            content: Container(
-                                                              height: 250,
-                                                              child: Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    const Text(
-                                                                      'Why are you reporting this post ?',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              Colors.red),
-                                                                    ),
-                                                                    const Divider(
-                                                                      color: Colors
-                                                                          .grey,
-                                                                    ),
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        print(
-                                                                            'its a scam');
-                                                                        // postReport(
-                                                                        //     email: user
-                                                                        //         .email,
-                                                                        //     reason:
-                                                                        //         'its a scam',
-                                                                        //     postId:
-                                                                        //         snapshot.data!.docs[index]['postId']);
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      },
-                                                                      child: const Text(
-                                                                          'Its a Scam'),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          17,
-                                                                    ),
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        print(
-                                                                            'Nudity ');
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      },
-                                                                      child: const Text(
-                                                                          'Nudity or sexual activity'),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          17,
-                                                                    ),
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        print(
-                                                                            'Hate speech');
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      },
-                                                                      child: const Text(
-                                                                          'Hate speech or symbol'),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          17,
-                                                                    ),
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        print(
-                                                                            'False Information');
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      },
-                                                                      child: const Text(
-                                                                          'False Information'),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          17,
-                                                                    ),
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        print(
-                                                                            'Violence');
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      },
-                                                                      child: const Text(
-                                                                          'Violence'),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                          17,
-                                                                    ),
-                                                                    InkWell(
-                                                                      onTap:
-                                                                          () {
-                                                                        print(
-                                                                            'Something else');
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      },
-                                                                      child: const Text(
-                                                                          'Something else'),
-                                                                    ),
-                                                                  ]),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                    child: Text('Yes')),
-                                                TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                    child: Text('No'))
-                                              ],
-                                            );
-                                          }));
+                                      postReport(
+                                          uid: user.id,
+                                          reports: snapshot.data!.docs[index]
+                                              ['reports'],
+                                          postId: snapshot.data!.docs[index]
+                                              ['postId']);
                                     },
-                                    icon: Icon(
-                                      Icons.flag,
-                                      color: Colors.white,
-                                    ),
+                                    icon: snapshot.data!.docs[index]['reports']
+                                            .contains(user.id)
+                                        ? Icon(
+                                            Icons.flag,
+                                            color: Colors.red,
+                                          )
+                                        : Icon(
+                                            Icons.flag,
+                                            color: Colors.white,
+                                          ),
                                   )
                                 ],
                               ),
@@ -529,19 +400,26 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
-  // void postReport(
-  //     {required String postId,
-  //     required reports,
-  //     required String reason,
-  //     required String email}) async {
-  //   try {
-  //     _firestore.collection('posts').doc(postId).update({
-  //       'reports': {'reason': reason, 'reported by': email}
-  //     });
-  //     ScaffoldMessenger.of(context)
-  //         .showSnackBar(SnackBar(content: Text('Reported')));
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-  // }
+  void postReport({
+    required String uid,
+    required String postId,
+    required List reports,
+  }) async {
+    try {
+      if (reports.contains(uid)) {
+        _firestore.collection('posts').doc(postId).update({
+          'reports': FieldValue.arrayRemove([uid]),
+        });
+      } else {
+        _firestore.collection('posts').doc(postId).update({
+          'reports': FieldValue.arrayUnion([uid]),
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Colors.red, content: Text('Post Reported')));
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

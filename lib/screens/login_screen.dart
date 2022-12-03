@@ -139,6 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   );
                 } else if (res == 'admin') {
+                  print('admin logged');
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
