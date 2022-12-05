@@ -1,6 +1,8 @@
+import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shake/shake.dart';
 import 'package:vibrant_og/screens/login_screen.dart';
 import 'package:vibrant_og/screens/singlechat_screen.dart';
 
@@ -15,10 +17,27 @@ class _ChatScreenState extends State<ChatScreen> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   List users = [];
   var randomUser;
+  late ShakeDetector detector;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    detector = ShakeDetector.autoStart(
+        shakeSlopTimeMS: 500,
+        shakeCountResetTime: 3000,
+        shakeThresholdGravity: 2.7,
+        minimumShakeCount: 1,
+        onPhoneShake: () async {
+          print('Shaked');
+          await getUsers();
+        });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    detector.stopListening();
   }
 
   @override
@@ -127,6 +146,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future getUsers() async {
+    print('getusers called');
     await for (var snapshot
         in FirebaseFirestore.instance.collection('users').snapshots()) {
       for (var user in snapshot.docs) {

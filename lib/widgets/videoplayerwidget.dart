@@ -242,16 +242,23 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                                           vid: widget.detu['id']);
                                     },
                                     icon: widget.detu['likes'].contains(user.id)
-                                        ? Icon(
+                                        ? const Icon(
                                             Icons.favorite,
                                             size: 39,
                                             color: Colors.red,
                                           )
-                                        : Icon(
+                                        : const Icon(
                                             Icons.favorite_border,
                                             size: 39,
                                             color: Colors.red,
                                           ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 27),
+                                  child: Text(
+                                    widget.detu['likes'].length.toString(),
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 )
                               ],

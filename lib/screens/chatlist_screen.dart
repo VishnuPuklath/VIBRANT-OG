@@ -53,12 +53,15 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           return SingleChatScreen(user: admin);
                         }));
                       },
-                      trailing: Icon(Icons.admin_panel_settings),
-                      subtitle: Text('Tap to Chat with admin'),
-                      title: Text('Admin'),
-                      leading: CircleAvatar(
+                      trailing: const Icon(Icons.admin_panel_settings),
+                      subtitle: const Text('Tap to Chat with admin'),
+                      title: const Text('Admin'),
+                      leading: const CircleAvatar(
                         backgroundImage: AssetImage('assets/admin.png'),
                       )),
+                  const Divider(
+                    color: Colors.black,
+                  ),
                   ListView.builder(
                       shrinkWrap: true,
                       itemCount: snapshot.data!.docs.length,
@@ -120,11 +123,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                                     snapshot.data!.docs[index]
                                                         ['rpic'])),
                                             title: Center(
-                                                child: Text(snapshot.data!
-                                                    .docs[index]['email'])),
+                                              child: Text(snapshot
+                                                  .data!.docs[index]['email']),
+                                            ),
                                             subtitle: Center(
-                                                child: Text(snapshot.data!
-                                                    .docs[index]['text'])),
+                                              child: Text(snapshot
+                                                  .data!.docs[index]['text']),
+                                            ),
                                           ),
                                           const Divider(
                                             color: Colors.black,
