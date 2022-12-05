@@ -8,9 +8,11 @@ class Vibe {
   String? profilePicUrl;
   String? videoUrl;
   String? description;
+  final List likes;
 
   Vibe(
       {required this.videoUrl,
+      required this.likes,
       required this.id,
       required this.email,
       required this.description,
@@ -22,12 +24,14 @@ class Vibe {
         'username': username,
         'videoUrl': videoUrl,
         'description': description,
+        'likes': likes,
         'id': id
       };
 
   static Vibe fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     return Vibe(
+        likes: snapshot['likes'],
         id: snapshot['id'],
         email: snapshot['email'],
         username: snapshot['username'],

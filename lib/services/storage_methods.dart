@@ -45,6 +45,7 @@ class StorageMethods {
       String vid = Uuid().v1();
       String videoUrl = await _uploadVideoToStorage(vid, videoPath);
       Vibe vibe = Vibe(
+          likes: [],
           id: vid,
           email: (userDoc.data()! as Map<String, dynamic>)['email'],
           username: (userDoc.data()! as Map<String, dynamic>)['username'],

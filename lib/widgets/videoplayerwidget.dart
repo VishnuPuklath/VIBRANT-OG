@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:vibrant_og/providers/user_provider.dart';
 import 'package:vibrant_og/screens/vibecomment_screen.dart';
 import 'package:vibrant_og/screens/vibrant.dart';
+import 'package:vibrant_og/model/user.dart' as model;
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerWid extends StatefulWidget {
@@ -45,6 +48,7 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
 
   @override
   Widget build(BuildContext context) {
+    model.User? user = Provider.of<UserProvider>(context).getUser;
     return GestureDetector(
       onTap: () {
         if (videoPlayerController.value.isPlaying) {
@@ -230,12 +234,24 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 27),
                                   child: IconButton(
-                                    onPressed: () async {},
-                                    icon: const Icon(
-                                      Icons.favorite_border,
-                                      size: 39,
-                                      color: Colors.red,
-                                    ),
+                                    onPressed: () async {
+                                      print('Like pressed');
+                                      likeVibe(
+                                          likes: widget.detu['likes'],
+                                          uid: user.id,
+                                          vid: widget.detu['id']);
+                                    },
+                                    icon: widget.detu['likes'].contains(user.id)
+                                        ? Icon(
+                                            Icons.favorite,
+                                            size: 39,
+                                            color: Colors.red,
+                                          )
+                                        : Icon(
+                                            Icons.favorite_border,
+                                            size: 39,
+                                            color: Colors.red,
+                                          ),
                                   ),
                                 )
                               ],
@@ -351,5 +367,18 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
     setState(() {
       commentsCount = snapshot.docs.length.toString();
     });
+  }
+
+  void likeVibe(
+      {required String vid, required String uid, required List likes}) async {
+    if (likes.contains(uid)) {
+      _firestore.collection('videos').doc(vid).update({
+        'likes': FieldValue.arrayRemove([uid]),
+      });
+    } else {
+      _firestore.collection('videos').doc(vid).update({
+        'likes': FieldValue.arrayUnion([uid]),
+      });
+    }
   }
 }

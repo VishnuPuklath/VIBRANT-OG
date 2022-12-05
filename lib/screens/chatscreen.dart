@@ -121,7 +121,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   )
                 ],
               )
-            : Text('Shake for users')
+            : const Text('Shake for users')
       ]),
     );
   }
@@ -130,8 +130,10 @@ class _ChatScreenState extends State<ChatScreen> {
     await for (var snapshot
         in FirebaseFirestore.instance.collection('users').snapshots()) {
       for (var user in snapshot.docs) {
-        if (user.id != _auth.currentUser!.uid) {
+        if (user.id != _auth.currentUser!.uid &&
+            user.id != 'rvp8XTNFvsN3FFmQ5dLQtn5A3mH3') {
           users.add(user.data());
+          print(user.data());
         }
       }
       setState(() {

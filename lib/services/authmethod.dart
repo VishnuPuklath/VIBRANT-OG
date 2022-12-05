@@ -15,6 +15,9 @@ class AuthMethods {
     String res = 'Some error occured';
     file ??= AssetImage('assets/nouser.png');
     try {
+      if (email == 'admin@gmail.com') {
+        res = 'Restricted email id .Please use another one';
+      }
       UserCredential cred = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
 

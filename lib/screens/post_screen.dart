@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrant_og/model/user.dart' as model;
 import 'package:vibrant_og/model/post.dart';
@@ -120,27 +121,21 @@ class _PostScreenState extends State<PostScreen> {
                                   const EdgeInsets.symmetric(horizontal: 5),
                               child: Row(
                                 children: [
-                                  IconButton(
-                                      onPressed: () async {
-                                        print(user.id);
-                                        print('liked post');
-                                        likePost(
-                                            postId: snapshot.data!.docs[index]
-                                                ['postId'],
-                                            likes: snapshot.data!.docs[index]
-                                                ['likes'],
-                                            uid: user.id);
-                                      },
-                                      icon: snapshot.data!.docs[index]['likes']
-                                              .contains(user.id)
-                                          ? Icon(
-                                              Icons.favorite,
-                                              color: Colors.red,
-                                            )
-                                          : Icon(
-                                              Icons.favorite_border_outlined,
-                                              color: Colors.red,
-                                            )),
+                                  LikeButton(
+                                    onTap: (isLiked) {
+                                      return likePost(
+                                          postId: snapshot.data!.docs[index]
+                                              ['postId'],
+                                          likes: snapshot.data!.docs[index]
+                                              ['likes'],
+                                          uid: user.id);
+                                    },
+                                    isLiked: snapshot.data!.docs[index]['likes']
+                                        .contains(user.id),
+                                    size: 27,
+                                    likeCount: snapshot
+                                        .data!.docs[index]['likes'].length,
+                                  ),
                                   IconButton(
                                       onPressed: () {
                                         print(snapshot.data!.docs[index]);
@@ -241,16 +236,6 @@ class _PostScreenState extends State<PostScreen> {
                                           ),
                                   )
                                 ],
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 6),
-                              child: Text(
-                                snapshot.data!.docs[index]['likes'].length
-                                        .toString() +
-                                    ' likes',
-                                style: TextStyle(color: Colors.white),
                               ),
                             ),
                             Padding(
@@ -381,23 +366,27 @@ class _PostScreenState extends State<PostScreen> {
     );
   }
 
-  Future<void> likePost(
+  Future<bool> likePost(
       {required String postId,
       required String uid,
       required List likes}) async {
+    bool isLiked = false;
     try {
       if (likes.contains(uid)) {
         await _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayRemove([uid]),
         });
+        isLiked = false;
       } else {
         await _firestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayUnion([uid]),
         });
+        isLiked = true;
       }
     } catch (e) {
       print(e.toString());
     }
+    return isLiked;
   }
 
   void postReport({
@@ -423,3 +412,20 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 }
+
+
+//  IconButton(
+//                                       onPressed: () async {
+                                     
+//                                       },
+//                                       icon: snapshot.data!.docs[index]['likes']
+//                                               .contains(user.id)
+//                                           ? Icon(
+//                                               Icons.favorite,
+//                                               color: Colors.red,
+//                                             )
+//                                           : Icon(
+//                                               Icons.favorite_border_outlined,
+//                                               color: Colors.red,
+//                                             ))
+
