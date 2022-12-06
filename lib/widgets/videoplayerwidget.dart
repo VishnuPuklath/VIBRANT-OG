@@ -63,10 +63,15 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
           });
         }
       },
-      child: FutureBuilder(
-        future: _initializeVideoPlayerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
+      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: _firestore
+            .collection('videos')
+            .where('id', isEqualTo: widget.detu['id'])
+            .snapshots(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            final List<QueryDocumentSnapshot<Map<String, dynamic>>> docs =
+                snapshot.data!.docs;
             return Stack(
               children: [
                 Container(
@@ -106,7 +111,7 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                                   backgroundImage: NetworkImage(
                                       widget.detu['profilePicUrl'])),
                               Text(
-                                ' ' + widget.detu['username'],
+                                ' ' + docs[0]['username'].toString(),
                                 style: const TextStyle(
                                     fontStyle: FontStyle.italic,
                                     fontSize: 16,
@@ -115,7 +120,7 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 5),
                                 child: Text(
-                                  ': ' + widget.detu['description'],
+                                  ': ' + docs[0]['description'].toString(),
                                   style: const TextStyle(
                                       fontStyle: FontStyle.italic,
                                       fontSize: 16,
@@ -128,72 +133,79 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(right: 27),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: const Text(
-                                                'Delete?',
-                                                style: TextStyle(
-                                                    color: Colors.red),
-                                              ),
-                                              content: const Text(
-                                                  'Are you sure you want to delete?'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () async {
-                                                    Navigator.of(context).pop();
-                                                    String res =
-                                                        await deleteVideo();
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      SnackBar(
-                                                        content: Text(
-                                                          res,
-                                                          style:
-                                                              const TextStyle(
-                                                                  color: Colors
-                                                                      .red),
+                                  child: docs[0]['username'] == user.username
+                                      ? IconButton(
+                                          onPressed: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                      'Delete?',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                    content: const Text(
+                                                        'Are you sure you want to delete?'),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          String res =
+                                                              await deleteVideo();
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                res,
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .red),
+                                                              ),
+                                                            ),
+                                                          );
+                                                          if (res ==
+                                                              'Deleted') {
+                                                            Navigator
+                                                                .pushReplacement(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) {
+                                                                return Vibrant();
+                                                              }),
+                                                            );
+                                                          }
+                                                        },
+                                                        child: const Text(
+                                                          'Yes',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red),
                                                         ),
                                                       ),
-                                                    );
-                                                    if (res == 'Deleted') {
-                                                      Navigator.pushReplacement(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) {
-                                                          return Vibrant();
-                                                        }),
-                                                      );
-                                                    }
-                                                  },
-                                                  child: const Text(
-                                                    'Yes',
-                                                    style: TextStyle(
-                                                        color: Colors.red),
-                                                  ),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: const Text(
-                                                    'No',
-                                                  ),
-                                                )
-                                              ],
-                                            );
-                                          });
-                                    },
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                      size: 39,
-                                    ),
-                                  ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: const Text(
+                                                          'No',
+                                                        ),
+                                                      )
+                                                    ],
+                                                  );
+                                                });
+                                          },
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                            size: 39,
+                                          ),
+                                        )
+                                      : SizedBox(),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(right: 27),
@@ -215,9 +227,8 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                                   ),
                                 ),
                                 commentsCount == null
-                                    ? Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 27),
+                                    ? const Padding(
+                                        padding: EdgeInsets.only(right: 27),
                                         child: Text(
                                           '0',
                                           style: TextStyle(color: Colors.white),
@@ -226,22 +237,39 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                                     : Padding(
                                         padding:
                                             const EdgeInsets.only(right: 27),
-                                        child: Text(
-                                          commentsCount.toString(),
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
+                                        child: StreamBuilder<
+                                            QuerySnapshot<
+                                                Map<String, dynamic>>>(
+                                          stream: _firestore
+                                              .collection('videos')
+                                              .doc(widget.detu['id'])
+                                              .collection('comments')
+                                              .snapshots(),
+                                          builder: (context,
+                                              AsyncSnapshot snapshot) {
+                                            if (snapshot.hasData) {
+                                              return Text(
+                                                snapshot.data.docs.length
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                    color: Colors.white),
+                                              );
+                                            } else {
+                                              return Text('..');
+                                            }
+                                          },
+                                        )),
                                 Padding(
                                   padding: const EdgeInsets.only(right: 27),
                                   child: IconButton(
                                     onPressed: () async {
                                       print('Like pressed');
                                       likeVibe(
-                                          likes: widget.detu['likes'],
+                                          likes: docs[0]['likes'],
                                           uid: user.id,
                                           vid: widget.detu['id']);
                                     },
-                                    icon: widget.detu['likes'].contains(user.id)
+                                    icon: docs[0]['likes'].contains(user.id)
                                         ? const Icon(
                                             Icons.favorite,
                                             size: 39,
@@ -257,7 +285,7 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 27),
                                   child: Text(
-                                    widget.detu['likes'].length.toString(),
+                                    docs[0]['likes'].length.toString(),
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 )
@@ -374,6 +402,12 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
     setState(() {
       commentsCount = snapshot.docs.length.toString();
     });
+  }
+
+  Stream getData() {
+    Stream<DocumentSnapshot<Map<String, dynamic>>> snapshot =
+        _firestore.collection('videos').doc('widget.videoloc').snapshots();
+    return snapshot;
   }
 
   void likeVibe(

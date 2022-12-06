@@ -1,16 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:like_button/like_button.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrant_og/model/user.dart' as model;
-import 'package:vibrant_og/model/post.dart';
 import 'package:vibrant_og/providers/user_provider.dart';
 import 'package:vibrant_og/screens/add_post.dart';
 import 'package:vibrant_og/screens/comments_screen.dart';
 import 'package:vibrant_og/screens/login_screen.dart';
-import 'package:vibrant_og/screens/vibrant.dart';
 
 class PostScreen extends StatefulWidget {
   const PostScreen({Key? key}) : super(key: key);
@@ -51,8 +48,12 @@ class _PostScreenState extends State<PostScreen> {
             ),
             onPressed: () {
               _auth.signOut();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: ((context) => LoginScreen())));
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: ((context) => LoginScreen()),
+                ),
+              );
             },
             child: const Icon(
               Icons.exit_to_app,
