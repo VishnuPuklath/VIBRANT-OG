@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:vibrant_og/providers/user_provider.dart';
+import 'package:vibrant_og/services/authmethod.dart';
 import 'package:vibrant_og/widgets/showOtp.dart';
 
 class Mobile extends StatefulWidget {
@@ -11,6 +13,7 @@ class Mobile extends StatefulWidget {
 }
 
 class _MobileState extends State<Mobile> {
+  UserProvider _provider = UserProvider();
   FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   TextEditingController _smsController = TextEditingController();
@@ -89,6 +92,8 @@ class _MobileState extends State<Mobile> {
                 .collection('users')
                 .doc(_auth.currentUser!.uid)
                 .update({'mobile': phoneNumber});
+
+            Navigator.of(context).pop();
             Navigator.of(context).pop();
           },
         );

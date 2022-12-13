@@ -8,6 +8,7 @@ import 'package:vibrant_og/model/user.dart' as model;
 import 'package:vibrant_og/screens/login_screen.dart';
 import 'package:vibrant_og/screens/updateMobileScreen.dart';
 import 'package:vibrant_og/services/storage_methods.dart';
+import 'package:vibrant_og/widgets/showOtp.dart';
 import '../providers/user_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -38,120 +39,130 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         actions: [
           ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.black,
-              ),
-              onPressed: () {
-                _auth.signOut();
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: ((context) => LoginScreen())));
-              },
-              child: const Icon(
-                Icons.exit_to_app,
-                size: 32,
-              ))
+            style: ElevatedButton.styleFrom(
+              primary: Colors.black,
+            ),
+            onPressed: () {
+              _auth.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: ((context) => LoginScreen()),
+                ),
+              );
+            },
+            child: const Icon(
+              Icons.exit_to_app,
+              size: 32,
+            ),
+          )
         ],
       ),
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(
-              height: 18,
-            ),
-            Stack(
-              children: [
-                CircleAvatar(
-                  backgroundImage: File == null
-                      ? NetworkImage(user.profilePicUrl!)
-                      : MemoryImage(File!) as ImageProvider,
-                  radius: 70,
-                  backgroundColor: Colors.amber,
-                ),
-                Positioned(
-                  bottom: -9,
-                  right: 6,
-                  child: IconButton(
-                    color: Colors.amberAccent[50],
-                    onPressed: () {
-                      print('Image need to change');
-                      picChange();
-                    },
-                    icon: const Icon(Icons.camera_alt),
+      body: StreamBuilder(
+        stream: _firestore.collection('users').doc(user.id).snapshots(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    height: 18,
                   ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Text(
-              user.username,
-              style: const TextStyle(fontSize: 17),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Container(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Stack(
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Text(
-                          'Email',
-                          style: TextStyle(color: Colors.blue),
+                      CircleAvatar(
+                        backgroundImage: File == null
+                            ? NetworkImage(user.profilePicUrl!)
+                            : MemoryImage(File!) as ImageProvider,
+                        radius: 70,
+                        backgroundColor: Colors.amber,
+                      ),
+                      Positioned(
+                        bottom: -9,
+                        right: 6,
+                        child: IconButton(
+                          color: Colors.amberAccent[50],
+                          onPressed: () {
+                            print('Image need to change');
+                            picChange();
+                          },
+                          icon: const Icon(Icons.camera_alt),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 6, top: 5),
-                        child: Text(user.email),
-                      ),
-                    ]),
-                color: Colors.brown[50],
-                height: 50,
-                width: double.infinity,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              'Bio',
-                              style: TextStyle(color: Colors.blue),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    user.username,
+                    style: const TextStyle(fontSize: 17),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 7),
+                    child: Container(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(left: 5),
+                              child: Text(
+                                'Email',
+                                style: TextStyle(color: Colors.blue),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 6, top: 5),
-                            child: user.bio == null
-                                ? const Text('')
-                                : Text(user.bio!),
-                          )
-                        ]),
-                    IconButton(
-                        onPressed: () {
-                          showBottomSheet(
-                              context: context,
-                              builder: (context) {
-                                return Container(
-                                  color: Colors.black,
-                                  height: 300,
-                                  width: double.infinity,
-                                  child: Column(
+                            Padding(
+                              padding: const EdgeInsets.only(left: 6, top: 5),
+                              child: Text(user.email),
+                            ),
+                          ]),
+                      color: Colors.brown[50],
+                      height: 50,
+                      width: double.infinity,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 7),
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    'Bio',
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 6, top: 5),
+                                  child: snapshot.data['bio'] == null
+                                      ? const Text('')
+                                      : Text(snapshot.data['bio']),
+                                )
+                              ]),
+                          IconButton(
+                            onPressed: () {
+                              showBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return Container(
+                                    color: Colors.black,
+                                    height: 300,
+                                    width: double.infinity,
+                                    child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
@@ -188,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 String res = await updateBio(
                                                     id: user.id,
                                                     bio: _bioController.text);
-                                                Navigator.pop(context);
+                                                Navigator.of(context).pop();
 
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(SnackBar(
@@ -198,69 +209,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               } else {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
-                                                        const SnackBar(
-                                                  content:
-                                                      Text('Please enter bio'),
-                                                  backgroundColor: Colors.red,
-                                                ));
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        'Please enter bio'),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
                                               }
                                             },
                                             child: const Text('Update'))
-                                      ]),
-                                );
-                              });
-                        },
-                        icon: const Icon(Icons.edit))
-                  ],
-                ),
-                color: Colors.brown[50],
-                height: 50,
-                width: double.infinity,
-              ),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7),
-              child: Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.only(left: 5),
-                            child: Text(
-                              'Mobile Number',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 6, top: 5),
-                            child: user.mobile == null
-                                ? Text('')
-                                : Text(user.mobile.toString()),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            icon: const Icon(Icons.edit),
                           )
-                        ]),
-                    IconButton(
-                        onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return Mobile();
-                          }));
-                        },
-                        icon: Icon(Icons.edit))
-                  ],
-                ),
-                color: Colors.brown[50],
-                height: 50,
-                width: double.infinity,
+                        ],
+                      ),
+                      color: Colors.brown[50],
+                      height: 50,
+                      width: double.infinity,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 7),
+                    child: Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    'Mobile Number',
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.only(left: 6, top: 5),
+                                  child: user.mobile == null
+                                      ? const Text('')
+                                      : Text(snapshot.data['mobile']),
+                                )
+                              ]),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return const Mobile();
+                                  },
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.edit),
+                          )
+                        ],
+                      ),
+                      color: Colors.brown[50],
+                      height: 50,
+                      width: double.infinity,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
+            );
+          }
+          return Center(child: CircularProgressIndicator());
+        },
       ),
     );
   }

@@ -9,21 +9,28 @@ void showOTP(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return SizedBox(
-          height: 200,
-          width: 300,
+        return Container(
           child: AlertDialog(
-            title: const Text('Enter OTP'),
-            content: PinCodeTextField(
-              controller: controller,
-              onChanged: (value) {},
-              appContext: context,
-              length: 6,
+            title: const Align(
+                alignment: Alignment.center, child: Text('Enter OTP')),
+            content: Container(
+              height: 100,
+              width: 250,
+              child: PinCodeTextField(
+                controller: controller,
+                onChanged: (value) {},
+                appContext: context,
+                length: 6,
+              ),
             ),
             actions: [
-              ElevatedButton(
-                onPressed: onPressed,
-                child: const Text('Done'),
+              Align(
+                alignment: Alignment.center,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: Colors.black),
+                  onPressed: onPressed,
+                  child: const Text('Verify'),
+                ),
               )
             ],
           ),
