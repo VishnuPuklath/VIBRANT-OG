@@ -8,9 +8,11 @@ class User {
   String password;
   String? profilePicUrl;
   String? bio;
+  String? mobile;
 
   User(
       {required this.id,
+      this.mobile,
       this.role = 'user',
       required this.email,
       required this.password,
@@ -19,6 +21,7 @@ class User {
       this.bio});
 
   Map<String, dynamic> toJson() => {
+        'mobile': mobile,
         'role': role,
         'id': id,
         'bio': bio,
@@ -33,6 +36,7 @@ class User {
 
     return User(
       role: snapshot['role'],
+      mobile: snapshot['mobile'],
       bio: snapshot['bio'],
       email: snapshot['email'],
       id: snapshot['id'],

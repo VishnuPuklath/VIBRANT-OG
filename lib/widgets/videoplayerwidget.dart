@@ -205,7 +205,7 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                                             size: 39,
                                           ),
                                         )
-                                      : SizedBox(),
+                                      : const SizedBox(),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(right: 27),
@@ -255,10 +255,11 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                                                     color: Colors.white),
                                               );
                                             } else {
-                                              return Text('..');
+                                              return const Text('..');
                                             }
                                           },
-                                        )),
+                                        ),
+                                      ),
                                 Padding(
                                   padding: const EdgeInsets.only(right: 27),
                                   child: IconButton(
@@ -286,9 +287,9 @@ class _VideoPlayerWidState extends State<VideoPlayerWid> {
                                   padding: const EdgeInsets.only(right: 27),
                                   child: Text(
                                     docs[0]['likes'].length.toString(),
-                                    style: TextStyle(color: Colors.white),
+                                    style: const TextStyle(color: Colors.white),
                                   ),
-                                )
+                                ),
                               ],
                             )
                           ],

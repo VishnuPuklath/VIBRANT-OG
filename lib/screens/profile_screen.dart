@@ -1,17 +1,13 @@
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:vibrant_og/model/user.dart' as model;
 import 'package:vibrant_og/screens/login_screen.dart';
-import 'package:vibrant_og/screens/profiledit_screen.dart';
-
+import 'package:vibrant_og/screens/updateMobileScreen.dart';
 import 'package:vibrant_og/services/storage_methods.dart';
-
 import '../providers/user_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -22,6 +18,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  TextEditingController _bioController = TextEditingController();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth _auth = FirebaseAuth.instance;
   Uint8List? File;
@@ -93,18 +90,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               user.username,
               style: const TextStyle(fontSize: 17),
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ProfileEdit();
-                }));
-                print('Goes to edit page');
-              },
-              child: const Text(
-                'Edit',
-                style: TextStyle(color: Colors.blue, fontSize: 13),
-              ),
-            ),
             const SizedBox(
               height: 10,
             ),
@@ -124,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Padding(
                         padding: const EdgeInsets.only(left: 6, top: 5),
                         child: Text(user.email),
-                      )
+                      ),
                     ]),
                 color: Colors.brown[50],
                 height: 50,
@@ -137,22 +122,97 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 7),
               child: Container(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Text(
-                          'Bio',
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 6, top: 5),
-                        child:
-                            user.bio == null ? const Text('') : Text(user.bio!),
-                      )
-                    ]),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Text(
+                              'Bio',
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 6, top: 5),
+                            child: user.bio == null
+                                ? const Text('')
+                                : Text(user.bio!),
+                          )
+                        ]),
+                    IconButton(
+                        onPressed: () {
+                          showBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return Container(
+                                  color: Colors.black,
+                                  height: 300,
+                                  width: double.infinity,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          'Update Bio',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 25),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10, right: 5, left: 5),
+                                          child: Container(
+                                            color: Colors.white,
+                                            child: TextFormField(
+                                              controller: _bioController,
+                                              decoration: const InputDecoration(
+                                                  hintText: 'Bio',
+                                                  hintStyle: TextStyle(
+                                                      color: Colors.white),
+                                                  border: InputBorder.none),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.teal),
+                                            onPressed: () async {
+                                              if (_bioController
+                                                  .text.isNotEmpty) {
+                                                String res = await updateBio(
+                                                    id: user.id,
+                                                    bio: _bioController.text);
+                                                Navigator.pop(context);
+
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  content: Text(res.toString()),
+                                                  backgroundColor: Colors.green,
+                                                ));
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                        const SnackBar(
+                                                  content:
+                                                      Text('Please enter bio'),
+                                                  backgroundColor: Colors.red,
+                                                ));
+                                              }
+                                            },
+                                            child: const Text('Update'))
+                                      ]),
+                                );
+                              });
+                        },
+                        icon: const Icon(Icons.edit))
+                  ],
+                ),
                 color: Colors.brown[50],
                 height: 50,
                 width: double.infinity,
@@ -164,21 +224,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 7),
               child: Container(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Padding(
-                        padding: EdgeInsets.only(left: 5),
-                        child: Text(
-                          'Mobile Number',
-                          style: TextStyle(color: Colors.blue),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 6, top: 5),
-                        child: Text(''),
-                      )
-                    ]),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Text(
+                              'Mobile Number',
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 6, top: 5),
+                            child: user.mobile == null
+                                ? Text('')
+                                : Text(user.mobile.toString()),
+                          )
+                        ]),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return Mobile();
+                          }));
+                        },
+                        icon: Icon(Icons.edit))
+                  ],
+                ),
                 color: Colors.brown[50],
                 height: 50,
                 width: double.infinity,
@@ -305,11 +380,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         });
   }
+
+  Future<String> updateBio({required String id, required String bio}) async {
+    String res = 'some error occurs';
+    try {
+      await _firestore.collection('users').doc(id).update({'bio': bio});
+      res = 'Bio Update Success';
+    } catch (e) {
+      res = e.toString();
+    }
+    return res;
+  }
 }
-
-
-
-// await _firestore
-//         .collection('user')
-//         .doc(_auth.currentUser!.uid)
-//         .update({'profilePic': profilePic});
